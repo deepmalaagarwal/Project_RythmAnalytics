@@ -31,4 +31,4 @@ https://www.kaggle.com/revilrosa/music-label-dataset
 
 Design
 
-[https://github.com/deepmalaagarwal/Project_RythmAnalytics/blob/master/RythmAnalytics%20Design.PNG]
+![https://github.com/deepmalaagarwal/Project_RythmAnalytics/blob/master/RythmAnalytics%20Design.PNG]
