@@ -6,11 +6,11 @@ Music business is constantly getting more and more data driven. The growth of st
 
 Team Members:
 
-●	Deepmala Agarwal
-
 ●	Brandon Warren
 
 ●	Willie Wiedenmann
+
+●	Deepmala Agarwal
 
 Description/Outline
 In this project we will try to outline nine use case analysis. These are listed below:
