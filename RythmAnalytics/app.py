@@ -1,35 +1,40 @@
-import os
-
-import pandas as pd
-import numpy as np
-
+import os, pandas as pd 
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy import create_engine
-
-from flask import Flask, jsonify, render_template
-from flask_sqlalchemy import SQLAlchemy
-
+from flask import (
+    Flask,
+    render_template,
+    jsonify,
+    request,
+    redirect)
+#################################################
+# Flask Setup
+#################################################
 app = Flask(__name__)
-
-
 #################################################
 # Database Setup
 #################################################
-
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/bellybutton.sqlite"
+from flask_sqlalchemy import SQLAlchemy
+rds_connection_string = "db/RythmAnalytics.sqlite"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///db/RythmAnalytics.sqlite"
+engine = create_engine(f'sqlite:///{rds_connection_string}')
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', '')
 db = SQLAlchemy(app)
 
-# reflect an existing database into a new model
-Base = automap_base()
-# reflect the tables
-Base.prepare(db.engine, reflect=True)
+#albums 
+# File to Load 
+file_to_load = "DataSets/clean_albums.csv"
+albums_data = pd.read_csv(file_to_load)
+file_to_load2 = "DataSets/cleaned_billboard_lyrics.csv"
+billboard_lyrics_data = pd.read_csv(file_to_load2, encoding = "ISO-8859-1")
 
-# Save references to each table
-Samples_Metadata = Base.classes.sample_metadata
-Samples = Base.classes.samples
-
+# Create table for Sales analysis of albums
+albums_data.to_sql(name="db_albums", con=engine,if_exists = 'replace',index=False)
+# Create table for Lyrics analysis of albums
+billboard_lyrics_data.to_sql(name="db_lyrics", con=engine,if_exists = 'replace',index=False)
+pd.read_sql_query('SELECT * FROM "db_lyrics"', con=engine)
 
 @app.route("/")
 def index():
@@ -37,69 +42,86 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/names")
-def names():
+@app.route("/album_sales")
+def album_sales():
     """Return a list of sample names."""
 
-    # Use Pandas to perform the sql query
-    stmt = db.session.query(Samples).statement
-    df = pd.read_sql_query(stmt, db.session.bind)
-
-    # Return a list of the column names (sample names)
-    return jsonify(list(df.columns)[2:])
-
-
-@app.route("/metadata/<sample>")
-def sample_metadata(sample):
-    """Return the MetaData for a given sample."""
-    sel = [
-        Samples_Metadata.sample,
-        Samples_Metadata.ETHNICITY,
-        Samples_Metadata.GENDER,
-        Samples_Metadata.AGE,
-        Samples_Metadata.LOCATION,
-        Samples_Metadata.BBTYPE,
-        Samples_Metadata.WFREQ,
-    ]
-
-    results = db.session.query(*sel).filter(Samples_Metadata.sample == sample).all()
-
-    # Create a dictionary entry for each row of metadata information
-    sample_metadata = {}
-    for result in results:
-        sample_metadata["sample"] = result[0]
-        sample_metadata["ETHNICITY"] = result[1]
-        sample_metadata["GENDER"] = result[2]
-        sample_metadata["AGE"] = result[3]
-        sample_metadata["LOCATION"] = result[4]
-        sample_metadata["BBTYPE"] = result[5]
-        sample_metadata["WFREQ"] = result[6]
-
-    print(sample_metadata)
-    return jsonify(sample_metadata)
-
-
-@app.route("/samples/<sample>")
-def samples(sample):
-    """Return `otu_ids`, `otu_labels`,and `sample_values`."""
-    stmt = db.session.query(Samples).statement
-    df = pd.read_sql_query(stmt, db.session.bind)
-
-    # Filter the data based on the sample number and
-    # only keep rows with values above 1
-    sample_data = df.loc[df[sample] > 1, ["otu_id", "otu_label", sample]]
-
-    # Sort by sample
-    sample_data.sort_values(by=sample, ascending=False, inplace=True)
-
-    # Format the data to send as json
-    data = {
-        "otu_ids": sample_data.otu_id.values.tolist(),
-        "sample_values": sample_data[sample].values.tolist(),
-        "otu_labels": sample_data.otu_label.tolist(),
+    df = pd.read_sql_query('SELECT "album_title", "num_of_sales" FROM "db_albums" WHERE "year_of_pub"= "2006" ORDER BY "num_of_sales" desc', con=engine).head(5)
+    album = [row[0:10] for row in df["album_title"]]
+    sales = [int(row)-900000 for row in df["num_of_sales"]]
+    trace1 = {
+      "x": album,
+      "y": sales,
+      "type": "bar"
     }
-    return jsonify(data)
 
+    print(sales)
+    return jsonify(trace1)
+
+@app.route("/total_critic")
+def total_critic():
+    df = pd.read_sql_query('SELECT "album_title", "rolling_stone_critic" + "mtv_critic" + "music_maniac_critic" as "Total_Critic" FROM "db_albums" WHERE "year_of_pub"= "2006" ORDER BY "total_critic" desc', con=engine).head(10)
+    album_critic = [row[0:10] for row in df["album_title"]]
+    critic = [row for row in df["Total_Critic"]]
+    trace2 = {
+      "x": album_critic,
+      "y": critic,
+      "type": "bar"
+    }
+    print(len(album_critic), len(critic))
+    return jsonify(trace2)
+
+@app.route("/debut_artists")
+def debut_artists():
+    sqlQueryStr ='SELECT "artist_id", COUNT("album_title") AS "CNT_albums" FROM "db_albums" WHERE "year_of_pub" = 2006 GROUP BY "artist_id" ORDER BY COUNT("album_title") DESC'
+    print(sqlQueryStr)
+    df = pd.read_sql_query(sqlQueryStr,con=engine).head(10)
+    album_artist = [row for row in df["artist_id"]]
+    sales = [row for row in df["CNT_albums"]]
+    trace3 = {
+      "x": album_artist,
+      "y": sales,
+      "type":"bar"
+    }
+    print(album_artist)
+    print(sales)
+    return jsonify(trace3)
+
+@app.route("/lyrics_analysis")
+def word_count(str):
+    counts = dict()
+    words = str.split(" ")
+    for word in words:
+        if word in counts:
+            counts[word] += 1
+        else:
+            counts[word] = 1
+    return counts
+
+def getCountWordLyrics(billboard_lyrics_data):
+    billboard_lyrics_data = billboard_lyrics_data[billboard_lyrics_data["Rank"].isin([1,2])]
+    wordlist = []
+    countlist = []
+    yearList =[]
+    sightWordsList = ['of','your','','you','a','the','i','na','it','to','if','that','had','into','on','is','its','and','she','so','x','yeah','im','in','this','p','up','let','me','my']
+    for row in billboard_lyrics_data.itertuples():
+        music_lyrics = billboard_lyrics_data["Lyrics"][row.Index]
+        year = billboard_lyrics_data["Year"][row.Index]
+        count = word_count(str(music_lyrics))
+        for k,v in count.items():
+            if k not in sightWordsList:
+                wordlist.append(k)
+                countlist.append(v)
+                yearList.append(year)
+    df= pd.DataFrame({"Year":yearList,"Word":wordlist,"Count":countlist})
+    df = df[(df["Count"]>15)]
+    df= df.sort_values(by=["Year","Count"],ascending =False)
+    # df.head()
+    return jsonify(list(df.columns)[2:])
 
 if __name__ == "__main__":
     app.run()
+
+album_sales()
+total_critic()
+getCountWordLyrics(billboard_lyrics_data)
