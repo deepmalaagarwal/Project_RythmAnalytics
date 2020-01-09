@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-function buildSalesChart(sample) {
-var url = "/album_sales/"+sample;
-=======
 
 // function buildMetadata(sample) {
 
@@ -60,7 +56,6 @@ function buildDebutArtistChart() {
 
 function buildSalesChart() {
 var url = "/album_sales";
->>>>>>> b0726aa81205a6b83687cc286a9a2ac186ea58ee
 d3.json(url).then(function(response) 
 {
     console.log(response);
@@ -169,8 +164,6 @@ function buildCriticChart(sample) {
         });
     });
 }
-<<<<<<< HEAD
-=======
         //     var layout = {
         //     autosize: false,
         //     width:500,
@@ -202,7 +195,6 @@ buildDebutArtistChart();
 //function init() {
   // Grab a reference to the dropdown select element
   // var selector = d3.select("#selDataset");
->>>>>>> b0726aa81205a6b83687cc286a9a2ac186ea58ee
 
     function buildLyricsWordChart(sample) {
         var url = "/Lyrics_word_count/"+sample;
@@ -271,7 +263,6 @@ function init() {
     });
 
     // Use the first sample from the list to build the initial plots
-<<<<<<< HEAD
     const firstSample = lyear[0].Year[0];
     buildCriticChart(firstSample);
     buildSalesChart(firstSample);
@@ -290,12 +281,3 @@ function optionChanged(newSample) {
     buildSalesChart(newSample);
     buildCriticChart(newSample);
   }
-=======
-
-    // const firstSample = sampleNames[0];
-  buildSalesChart();
-  buildDebutArtistChart();
-// =======
-    // const firstSample = sampleNames[0]
-// >>>>>>> f8d2552b62ca7a1a106cef13f54a221b9bdacfdd
->>>>>>> b0726aa81205a6b83687cc286a9a2ac186ea58ee
