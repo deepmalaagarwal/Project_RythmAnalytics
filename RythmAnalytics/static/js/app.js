@@ -1,6 +1,6 @@
 
  function buildSalesChart(sample) {
-  var url = "/album_sales"+sample;
+  var url = "/album_sales/"+sample;
   d3.json(url).then(function(response) 
   {
       console.log(response);
