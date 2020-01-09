@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 // function buildMetadata(sample) {
 
 //   // @TODO: Complete the following function that builds the metadata panel
@@ -53,7 +53,7 @@ function buildDebutArtistChart() {
     Plotly.newPlot("plot_artists", data, layout);
   });
 }  
-=======
+
 function buildSalesChart() {
 var url = "/album_sales";
 d3.json(url).then(function(response) 
@@ -192,7 +192,7 @@ function buildCriticChart() {
 buildCriticChart();
 buildSalesChart();
 buildDebutArtistChart();
->>>>>>> f8d2552b62ca7a1a106cef13f54a221b9bdacfdd
+// >>>>>>> f8d2552b62ca7a1a106cef13f54a221b9bdacfdd
 //function init() {
   // Grab a reference to the dropdown select element
   // var selector = d3.select("#selDataset");
@@ -207,10 +207,10 @@ buildDebutArtistChart();
   //   });
 
     // Use the first sample from the list to build the initial plots
-<<<<<<< HEAD
+
     // const firstSample = sampleNames[0];
   buildSalesChart();
   buildDebutArtistChart();
-=======
+// =======
     // const firstSample = sampleNames[0]
->>>>>>> f8d2552b62ca7a1a106cef13f54a221b9bdacfdd
+// >>>>>>> f8d2552b62ca7a1a106cef13f54a221b9bdacfdd

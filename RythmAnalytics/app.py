@@ -29,6 +29,7 @@ file_to_load = "DataSets/clean_albums.csv"
 
 # Read Purchasing File and store into Pandas data frame
 albums_data = pd.read_csv(file_to_load)
+billboard_lyrics_data = pd.read_csv("DataSets/cleaned_billboard_lyrics.csv")
 
 
 # from .models import Pet
@@ -49,9 +50,8 @@ def index():
 
 @app.route("/album_sales")
 def album_sales():
-    """Return a list of sample names."""
+    # """Return a list of sample names."""
 
-<<<<<<< HEAD
     df = pd.read_sql_query('SELECT "album_title", "num_of_sales" FROM "db_albums" WHERE "year_of_pub"= "2006" ORDER BY "num_of_sales" desc', con=engine).head(10)
     album = [row for row in df["album_title"]]
     sales = [row for row in df["num_of_sales"]]
@@ -75,17 +75,11 @@ def debut_artists():
     df = pd.read_sql_query('SELECT "artist_id", COUNT("album_title") AS "Cnt_albums" FROM "db_albums" WHERE "year_of_pub" = "2006" GROUP BY "artist_id" ORDER BY COUNT("album_title") DESC', con=engine).head(10)
     album = [row for row in df["artist_id"]]
     sales = [row for row in df["Cnt_albums"]]
-=======
-    df = pd.read_sql_query('SELECT "album_title", "num_of_sales" FROM "db_albums" WHERE "year_of_pub"= "2006" ORDER BY "num_of_sales" desc', con=engine).head(5)
-    album = [row[0:10] for row in df["album_title"]]
-    sales = [int(row)-900000 for row in df["num_of_sales"]]
->>>>>>> f8d2552b62ca7a1a106cef13f54a221b9bdacfdd
     trace1 = {
       "x": album,
       "y": sales,
       "type": "bar"
     }
-<<<<<<< HEAD
 
     print(len(album), len(sales))
     # print(jsonify(trace1))
@@ -96,7 +90,7 @@ def debut_artists():
 
 
 @app.route("/total_critic")
-def total_critic():
+def total_critic1():
     """Return the MetaData for a given sample."""
 
     df = pd.read_sql_query('SELECT "album_title", "rolling_stone_critic" + "mtv_critic" + "music_maniac_critic" as "Total_Critic" FROM "db_albums" WHERE "year_of_pub"= "2006" ORDER BY "total_critic" desc', con=engine).head(10)
@@ -104,8 +98,6 @@ def total_critic():
     # Return a list of the column names (sample names)
     return jsonify(list(df.columns)[2:])
 
-=======
->>>>>>> f8d2552b62ca7a1a106cef13f54a221b9bdacfdd
 
     print(sales)
     return jsonify(trace1)
@@ -123,8 +115,9 @@ def total_critic():
     print(len(album_critic), len(critic))
     return jsonify(trace2)
 
+
 @app.route("/debut_artists")
-def debut_artists():
+def debut_artists2():
     sqlQueryStr ='SELECT "artist_id", COUNT("album_title") AS "CNT_albums" FROM "db_albums" WHERE "year_of_pub" = 2006 GROUP BY "artist_id" ORDER BY COUNT("album_title") DESC'
     print(sqlQueryStr)
     df = pd.read_sql_query(sqlQueryStr,con=engine).head(10)
@@ -174,10 +167,4 @@ def getCountWordLyrics(billboard_lyrics_data):
 if __name__ == "__main__":
     app.run()
 
-<<<<<<< HEAD
 album_sales()
-=======
-album_sales()
-total_critic()
-getCountWordLyrics(billboard_lyrics_data)
->>>>>>> f8d2552b62ca7a1a106cef13f54a221b9bdacfdd
