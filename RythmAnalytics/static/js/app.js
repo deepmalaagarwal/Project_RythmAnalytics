@@ -1,66 +1,5 @@
-<<<<<<< HEAD
 function buildSalesChart(sample) {
 var url = "/album_sales/"+sample;
-=======
-
-// function buildMetadata(sample) {
-
-//   // @TODO: Complete the following function that builds the metadata panel
-
-//   // Use `d3.json` to fetch the metadata for a sample
-//     // Use d3 to select the panel with id of `#sample-metadata`
-
-//     // Use `.html("") to clear any existing metadata
-
-//     // Use `Object.entries` to add each key and value pair to the panel
-//     // Hint: Inside the loop, you will need to use d3 to append new
-//     // tags for each key-value in the metadata.
-
-//     // BONUS: Build the Gauge Chart
-//     // buildGauge(data.WFREQ);
-// }
-
-function buildSalesChart() {
-
-  var url = "/album_sales";
-  d3.json(url).then(function(response) {
-    console.log(response);
-    var data = [response];
-    var layout = {
-      title: "Sales",
-      xaxis: {
-        title: "Album"
-      },
-      yaxis: {
-        title: "Sales"
-      }
-    };
-    Plotly.newPlot("plot", data, layout);
-  });
-}  
-
-function buildDebutArtistChart() {
-
-  var url = "/debut_artists";
-  d3.json(url).then(function(response) {
-    console.log(response);
-    var data = [response];
-    var layout = {
-      title: "Sales",
-      xaxis: {
-        title: "Album"
-      },
-      yaxis: {
-        title: "Sales"
-      }
-    };
-    Plotly.newPlot("plot_artists", data, layout);
-  });
-}  
-
-function buildSalesChart() {
-var url = "/album_sales";
->>>>>>> b0726aa81205a6b83687cc286a9a2ac186ea58ee
 d3.json(url).then(function(response) 
 {
     console.log(response);
@@ -169,40 +108,6 @@ function buildCriticChart(sample) {
         });
     });
 }
-<<<<<<< HEAD
-=======
-        //     var layout = {
-        //     autosize: false,
-        //     width:500,
-        //     height:350,
-        //     title: "Album Sales by Artist",
-        //     margin: {
-        //         l: 50,
-        //         r: 50,
-        //         b: 100,
-        //         t: 100,
-        //         pad: 4
-        //       },
-        //     paper_bgcolor: '##87CEEB',
-        //     plot_bgcolor: '#c7c7c7',
-        //     xaxis: {
-        //         title: "Album"
-        //       },
-        //     yaxis: {
-        //         title: "Sales"
-        //       }
-        //     };
-        //     Plotly.newPlot("plotArtistPanel", dataArtist, layout);
-        //   });
-         
-buildCriticChart();
-buildSalesChart();
-buildDebutArtistChart();
-// >>>>>>> f8d2552b62ca7a1a106cef13f54a221b9bdacfdd
-//function init() {
-  // Grab a reference to the dropdown select element
-  // var selector = d3.select("#selDataset");
->>>>>>> b0726aa81205a6b83687cc286a9a2ac186ea58ee
 
     function buildLyricsWordChart(sample) {
         var url = "/Lyrics_word_count/"+sample;
@@ -271,7 +176,6 @@ function init() {
     });
 
     // Use the first sample from the list to build the initial plots
-<<<<<<< HEAD
     const firstSample = lyear[0].Year[0];
     buildCriticChart(firstSample);
     buildSalesChart(firstSample);
@@ -290,12 +194,3 @@ function optionChanged(newSample) {
     buildSalesChart(newSample);
     buildCriticChart(newSample);
   }
-=======
-
-    // const firstSample = sampleNames[0];
-  buildSalesChart();
-  buildDebutArtistChart();
-// =======
-    // const firstSample = sampleNames[0]
-// >>>>>>> f8d2552b62ca7a1a106cef13f54a221b9bdacfdd
->>>>>>> b0726aa81205a6b83687cc286a9a2ac186ea58ee
