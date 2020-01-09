@@ -27,20 +27,16 @@ db = SQLAlchemy(app)
 
 #albums 
 # File to Load (Remember to Change These)
-file_to_load = "RythmAnalytics/DataSets/clean_albums.csv"
-billboard_lyrics_data = pd.read_csv("RythmAnalytics/DataSets/cleaned_billboard_lyrics.csv")
-# Read Purchasing File and store into Pandas data frame
-albums_data = pd.read_csv(file_to_load)
+# file_to_load = "RythmAnalytics/DataSets/clean_albums.csv"
+# billboard_lyrics_data = pd.read_csv("RythmAnalytics/DataSets/cleaned_billboard_lyrics.csv")
+# # Read Purchasing File and store into Pandas data frame
+# albums_data = pd.read_csv(file_to_load)
 
-# from .models import Pet
-albums_data.to_sql(name="db_albums", con=engine,if_exists = 'replace',index=False)
-
-
-# Create table for Sales analysis of albums
-albums_data.to_sql(name="db_albums", con=engine,if_exists = 'replace',index=False)
-# Create table for Lyrics analysis of albums
-billboard_lyrics_data.to_sql(name="db_lyrics", con=engine,if_exists = 'replace',index=False)
-# pd.read_sql_query('SELECT * FROM "db_lyrics"', con=engine)
+# # Create table for Sales analysis of albums
+# albums_data.to_sql(name="db_albums", con=engine,if_exists = 'replace',index=False)
+# # Create table for Lyrics analysis of albums
+# billboard_lyrics_data.to_sql(name="db_lyrics", con=engine,if_exists = 'replace',index=False)
+# # pd.read_sql_query('SELECT * FROM "db_lyrics"', con=engine)
 
 @app.route("/")
 def index():
