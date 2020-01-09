@@ -19,16 +19,16 @@ app = Flask(__name__)
 # Database Setup
 #################################################
 from flask_sqlalchemy import SQLAlchemy
-rds_connection_string = "RythmAnalytics.sqlite"
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///RythmAnalytics.sqlite"
+rds_connection_string = "RythmAnalytics/RythmAnalytics.sqlite"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///RythmAnalytics/RythmAnalytics.sqlite"
 engine = create_engine(f'sqlite:///{rds_connection_string}')
 # app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', '')
 db = SQLAlchemy(app)
 
 #albums 
 # File to Load (Remember to Change These)
-file_to_load = "DataSets/clean_albums.csv"
-billboard_lyrics_data = pd.read_csv("DataSets/cleaned_billboard_lyrics.csv")
+file_to_load = "RythmAnalytics/DataSets/clean_albums.csv"
+billboard_lyrics_data = pd.read_csv("RythmAnalytics/DataSets/cleaned_billboard_lyrics.csv")
 # Read Purchasing File and store into Pandas data frame
 albums_data = pd.read_csv(file_to_load)
 
