@@ -86,19 +86,6 @@ def album_sales(sample):
     return jsonify(trace1)
 
 
-@app.route("/total_critic")
-def total_critic1():
-    """Return the MetaData for a given sample."""
-
-    df = pd.read_sql_query('SELECT "album_title", "rolling_stone_critic" + "mtv_critic" + "music_maniac_critic" as "Total_Critic" FROM "db_albums" WHERE "year_of_pub"= "2006" ORDER BY "total_critic" desc', con=engine).head(10)
-
-    # Return a list of the column names (sample names)
-    return jsonify(list(df.columns)[2:])
-
-
-    print(sales)
-    return jsonify(trace1)
-
 @app.route("/total_critic/<sample>")
 def total_critic(sample):
     sqlQueryStr = 'SELECT "album_title", "rolling_stone_critic" + "mtv_critic" + "music_maniac_critic" as "Total_Critic" FROM "db_albums" WHERE "year_of_pub"=' + sample + ' ORDER BY "total_critic" desc'
