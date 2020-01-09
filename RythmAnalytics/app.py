@@ -1,4 +1,6 @@
-import os, pandas as pd 
+import os 
+import pandas as pd 
+import numpy as np
 import sqlalchemy
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
@@ -34,19 +36,36 @@ billboard_lyrics_data = pd.read_csv(file_to_load2, encoding = "ISO-8859-1")
 albums_data.to_sql(name="db_albums", con=engine,if_exists = 'replace',index=False)
 # Create table for Lyrics analysis of albums
 billboard_lyrics_data.to_sql(name="db_lyrics", con=engine,if_exists = 'replace',index=False)
-pd.read_sql_query('SELECT * FROM "db_lyrics"', con=engine)
+# pd.read_sql_query('SELECT * FROM "db_lyrics"', con=engine)
 
 @app.route("/")
 def index():
     """Return the homepage."""
     return render_template("index.html")
 
-
-@app.route("/album_sales")
-def album_sales():
+@app.route("/names")
+def names():
     """Return a list of sample names."""
 
-    df = pd.read_sql_query('SELECT "album_title", "num_of_sales" FROM "db_albums" WHERE "year_of_pub"= "2006" ORDER BY "num_of_sales" desc', con=engine).head(5)
+    # Use Pandas to perform the sql query
+    # stmt = db.session.query(Samples).statement
+    # df = pd.read_sql_query(stmt, db.session.bind)
+    print("inside py name")
+    # Return a list of the column names (sample names)
+    listYear= ['2015','2014','2013','2012','2011','2010','2009','2008','2007','2006']
+    # df = pd.DataFrame(listYear,columns=["Year"])
+    # yearData = [row for row in df["Word"]]
+    YearTrace = {
+      "Year": listYear
+    }
+    print(YearTrace["Year"])
+    return jsonify(YearTrace)
+
+@app.route("/album_sales/<sample>")
+def album_sales(sample):
+    """Return a list of sample names."""
+    sqlQueryStr = 'SELECT "album_title", "num_of_sales" FROM "db_albums" WHERE "year_of_pub"= '+ sample + ' ORDER BY "num_of_sales" desc'
+    df = pd.read_sql_query(sqlQueryStr, con=engine).head(5)
     album = [row[0:10] for row in df["album_title"]]
     sales = [int(row)-900000 for row in df["num_of_sales"]]
     trace1 = {
@@ -58,9 +77,10 @@ def album_sales():
     print(sales)
     return jsonify(trace1)
 
-@app.route("/total_critic")
-def total_critic():
-    df = pd.read_sql_query('SELECT "album_title", "rolling_stone_critic" + "mtv_critic" + "music_maniac_critic" as "Total_Critic" FROM "db_albums" WHERE "year_of_pub"= "2006" ORDER BY "total_critic" desc', con=engine).head(10)
+@app.route("/total_critic/<sample>")
+def total_critic(sample):
+    sqlQueryStr = 'SELECT "album_title", "rolling_stone_critic" + "mtv_critic" + "music_maniac_critic" as "Total_Critic" FROM "db_albums" WHERE "year_of_pub"=' + sample + ' ORDER BY "total_critic" desc'
+    df = pd.read_sql_query(sqlQueryStr, con=engine).head(10)
     album_critic = [row[0:10] for row in df["album_title"]]
     critic = [row for row in df["Total_Critic"]]
     trace2 = {
@@ -71,35 +91,44 @@ def total_critic():
     print(len(album_critic), len(critic))
     return jsonify(trace2)
 
-@app.route("/debut_artists")
-def debut_artists():
-    sqlQueryStr ='SELECT "artist_id", COUNT("album_title") AS "CNT_albums" FROM "db_albums" WHERE "year_of_pub" = 2006 GROUP BY "artist_id" ORDER BY COUNT("album_title") DESC'
-    print(sqlQueryStr)
-    df = pd.read_sql_query(sqlQueryStr,con=engine).head(10)
-    album_artist = [row for row in df["artist_id"]]
-    sales = [row for row in df["CNT_albums"]]
+@app.route("/debut_artists/<sample>")
+def debut_artists(sample):
+    # sqlQueryStr ='SELECT "artist_id", COUNT("album_title") AS "CNT_albums" FROM "db_albums" WHERE "year_of_pub" = 2006 GROUP BY "artist_id" ORDER BY COUNT("album_title") DESC'
+    # print(sqlQueryStr)
+    # df = pd.read_sql_query(sqlQueryStr,con=engine).head(10)
+    # album_artist = [row for row in df["artist_id"]]
+    # sales = [row for row in df["CNT_albums"]]
+    sqlQueryStr="SELECT * FROM db_lyrics WHERE Year="+ sample
+    billboard_lyrics_df= pd.read_sql_query(sqlQueryStr, con=engine)
+    a = pd.DataFrame(billboard_lyrics_df["Artist"].value_counts()).reset_index()
+    a=a.head(5)
+    a.columns =("Artist","Count of Albums")
+    album_artist = [row for row in a["Artist"]]
+    Count_Albums = [row for row in a["Count of Albums"]]
     trace3 = {
       "x": album_artist,
-      "y": sales,
+      "y": Count_Albums,
       "type":"bar"
     }
-    print(album_artist)
-    print(sales)
     return jsonify(trace3)
 
-@app.route("/lyrics_analysis")
-def word_count(str):
-    counts = dict()
-    words = str.split(" ")
-    for word in words:
-        if word in counts:
-            counts[word] += 1
-        else:
-            counts[word] = 1
-    return counts
-
-def getCountWordLyrics(billboard_lyrics_data):
-    billboard_lyrics_data = billboard_lyrics_data[billboard_lyrics_data["Rank"].isin([1,2])]
+@app.route("/Lyrics_word_count/<sample>")
+def getCountWordLyrics(sample):
+    
+    def word_count(str):
+        counts = dict()
+        words = str.split(" ")
+        for word in words:
+            if word in counts:
+                counts[word] += 1
+            else:
+                counts[word] = 1
+        return counts
+    
+    print("inside lyrics")
+    # billboard_lyrics_data.to_sql(name="db_lyrics", con=engine,if_exists = 'replace',index=False)
+    billboard_lyrics_df= pd.read_sql_query('SELECT * FROM "db_lyrics"', con=engine)
+    billboard_lyrics_data = billboard_lyrics_df[billboard_lyrics_df["Rank"].isin([1,2])]
     wordlist = []
     countlist = []
     yearList =[]
@@ -113,15 +142,24 @@ def getCountWordLyrics(billboard_lyrics_data):
                 wordlist.append(k)
                 countlist.append(v)
                 yearList.append(year)
-    df= pd.DataFrame({"Year":yearList,"Word":wordlist,"Count":countlist})
-    df = df[(df["Count"]>15)]
-    df= df.sort_values(by=["Year","Count"],ascending =False)
-    # df.head()
-    return jsonify(list(df.columns)[2:])
+    df = pd.DataFrame({"Year":yearList,"Word":wordlist,"Count":countlist})
+    print(sample)
+    df = df[(df["Count"]>15) & (df["Year"]==int(sample))]
+    df = df.sort_values(by=["Year","Count"],ascending =False)
+    WordData = [row for row in df["Word"]]
+    CountData = [row for row in df["Count"]]
+    trace4 = {
+      "x": WordData,
+      "y": CountData,
+      "type": "bar"
+    }
+    print(trace4)
+    return jsonify(trace4)
 
 if __name__ == "__main__":
     app.run()
 
-album_sales()
-total_critic()
-getCountWordLyrics(billboard_lyrics_data)
+# album_sales(sample)
+# total_critic()
+# debut_artists()
+# getCountWordLyrics()
