@@ -24,7 +24,6 @@ engine = create_engine(f'sqlite:///{rds_connection_string}')
 db = SQLAlchemy(app)
 
 #albums 
-<<<<<<< HEAD
 # File to Load (Remember to Change These)
 file_to_load = "DataSets/clean_albums.csv"
 
@@ -35,13 +34,6 @@ albums_data = pd.read_csv(file_to_load)
 # from .models import Pet
 albums_data.to_sql(name="db_albums", con=engine,if_exists = 'replace',index=False)
 
-=======
-# File to Load 
-file_to_load = "DataSets/clean_albums.csv"
-albums_data = pd.read_csv(file_to_load)
-file_to_load2 = "DataSets/cleaned_billboard_lyrics.csv"
-billboard_lyrics_data = pd.read_csv(file_to_load2, encoding = "ISO-8859-1")
->>>>>>> f8d2552b62ca7a1a106cef13f54a221b9bdacfdd
 
 # Create table for Sales analysis of albums
 albums_data.to_sql(name="db_albums", con=engine,if_exists = 'replace',index=False)
