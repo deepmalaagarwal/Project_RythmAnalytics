@@ -26,11 +26,17 @@ engine = create_engine(f'sqlite:///{rds_connection_string}')
 db = SQLAlchemy(app)
 
 #albums 
-# File to Load 
+# File to Load (Remember to Change These)
 file_to_load = "DataSets/clean_albums.csv"
+
+# Read Purchasing File and store into Pandas data frame
 albums_data = pd.read_csv(file_to_load)
-file_to_load2 = "DataSets/cleaned_billboard_lyrics.csv"
-billboard_lyrics_data = pd.read_csv(file_to_load2, encoding = "ISO-8859-1")
+billboard_lyrics_data = pd.read_csv("DataSets/cleaned_billboard_lyrics.csv")
+
+
+# from .models import Pet
+albums_data.to_sql(name="db_albums", con=engine,if_exists = 'replace',index=False)
+
 
 # Create table for Sales analysis of albums
 albums_data.to_sql(name="db_albums", con=engine,if_exists = 'replace',index=False)
@@ -43,6 +49,7 @@ def index():
     """Return the homepage."""
     return render_template("index.html")
 
+<<<<<<< HEAD
 @app.route("/names")
 def names():
     """Return a list of sample names."""
@@ -68,11 +75,59 @@ def album_sales(sample):
     df = pd.read_sql_query(sqlQueryStr, con=engine).head(5)
     album = [row[0:10] for row in df["album_title"]]
     sales = [int(row)-900000 for row in df["num_of_sales"]]
+=======
+
+@app.route("/album_sales")
+def album_sales():
+    # """Return a list of sample names."""
+
+    df = pd.read_sql_query('SELECT "album_title", "num_of_sales" FROM "db_albums" WHERE "year_of_pub"= "2006" ORDER BY "num_of_sales" desc', con=engine).head(10)
+    album = [row for row in df["album_title"]]
+    sales = [row for row in df["num_of_sales"]]
     trace1 = {
       "x": album,
       "y": sales,
       "type": "bar"
     }
+
+    print(len(album), len(sales))
+    # print(jsonify(trace1))
+    
+    # Return a list of the column names (sample names)
+    # jsonify(trace1)
+    return jsonify(trace1)
+
+@app.route("/debut_artists")
+def debut_artists():
+    """Return a list of sample names."""
+
+    df = pd.read_sql_query('SELECT "artist_id", COUNT("album_title") AS "Cnt_albums" FROM "db_albums" WHERE "year_of_pub" = "2006" GROUP BY "artist_id" ORDER BY COUNT("album_title") DESC', con=engine).head(10)
+    album = [row for row in df["artist_id"]]
+    sales = [row for row in df["Cnt_albums"]]
+>>>>>>> b0726aa81205a6b83687cc286a9a2ac186ea58ee
+    trace1 = {
+      "x": album,
+      "y": sales,
+      "type": "bar"
+    }
+
+    print(len(album), len(sales))
+    # print(jsonify(trace1))
+    
+    # Return a list of the column names (sample names)
+    # jsonify(trace1)
+    return jsonify(trace1)
+
+
+@app.route("/total_critic")
+def total_critic1():
+    """Return the MetaData for a given sample."""
+
+    df = pd.read_sql_query('SELECT "album_title", "rolling_stone_critic" + "mtv_critic" + "music_maniac_critic" as "Total_Critic" FROM "db_albums" WHERE "year_of_pub"= "2006" ORDER BY "total_critic" desc', con=engine).head(10)
+
+    # Return a list of the column names (sample names)
+    return jsonify(list(df.columns)[2:])
+
 
     print(sales)
     return jsonify(trace1)
@@ -91,6 +146,7 @@ def total_critic(sample):
     print(len(album_critic), len(critic))
     return jsonify(trace2)
 
+<<<<<<< HEAD
 @app.route("/debut_artists/<sample>")
 def debut_artists(sample):
     # sqlQueryStr ='SELECT "artist_id", COUNT("album_title") AS "CNT_albums" FROM "db_albums" WHERE "year_of_pub" = 2006 GROUP BY "artist_id" ORDER BY COUNT("album_title") DESC'
@@ -105,6 +161,16 @@ def debut_artists(sample):
     a.columns =("Artist","Count of Albums")
     album_artist = [row for row in a["Artist"]]
     Count_Albums = [row for row in a["Count of Albums"]]
+=======
+
+@app.route("/debut_artists")
+def debut_artists2():
+    sqlQueryStr ='SELECT "artist_id", COUNT("album_title") AS "CNT_albums" FROM "db_albums" WHERE "year_of_pub" = 2006 GROUP BY "artist_id" ORDER BY COUNT("album_title") DESC'
+    print(sqlQueryStr)
+    df = pd.read_sql_query(sqlQueryStr,con=engine).head(10)
+    album_artist = [row for row in df["artist_id"]]
+    sales = [row for row in df["CNT_albums"]]
+>>>>>>> b0726aa81205a6b83687cc286a9a2ac186ea58ee
     trace3 = {
       "x": album_artist,
       "y": Count_Albums,
@@ -159,7 +225,11 @@ def getCountWordLyrics(sample):
 if __name__ == "__main__":
     app.run()
 
+<<<<<<< HEAD
 # album_sales(sample)
 # total_critic()
 # debut_artists()
 # getCountWordLyrics()
+=======
+album_sales()
+>>>>>>> b0726aa81205a6b83687cc286a9a2ac186ea58ee

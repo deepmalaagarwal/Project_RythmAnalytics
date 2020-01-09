@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>RythmAnalytics</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+
+<body>
+
+  <div class="container" style="background-color:azure">
+    <div class="row">
+      <div class="col-md-4 jumbotron text-center" style="background-image:url('https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/treble-clef-colorful-paint-splatters-music-theory-design-phoxy-design.jpg');height: 240px;background-position: center">
+      </div>
+      <div class="col-md-8 jumbotron text-center" style="background-color:lightskyblue;height: 240px;background-position:center">
+        <h1>RythmAnalytics Dashboard</h1>
+        <h5>An application to analyse your Music Data </h5>
+      </div>
+    <div class="row">
+      <div class="col-md-1">
+        <div class="col-md-1">
+          <!-- <div class="panel panel-primary"> -->
+            <!-- <div class="panel-body"> -->
+              <h5 class="panel-title">Year:</h5>
+              <select id="selDataset" onchange="optionChanged(this.value)"></select>
+            <!-- </div> -->
+          <!-- </div> -->
+        </div> 
+      </div>
+      <div class="col-md-5">
+        <div id="plotSales">
+          <div class="panel panel-primary">
+            <div class="panel-body">
+              <h3 class="panel-title">Album Sales by Year using Chart.js</h3>
+            </div>
+            <canvas id="plotSalesPanel" width="400" height="280" ></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div id="plotCrtics">
+          <div class="panel panel-primary">
+            <div class="panel-body">
+              <h3 class="panel-title">Album Critics by Year using Plotly.js</h3>
+            </div>
+            <div id="plotCriticsPanel" style="height: 350px; "></div>
+          </div>
+        </div>
+      </div>
+<<<<<<< HEAD
+      <div class="col-md-5">
+        <div id="plot"></div>
+      </div>
+      <div class="col-md-5">
+        <div id="plot_artists"></div>
+=======
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <div id="plotLyrics">
+          <div class="panel panel-primary">
+            <div class="panel-body">
+              <h3 class="panel-title">Top 5 Popular words used in Popular songs using Chart.js</h3>
+            </div>
+            <canvas id="plotLyricsPanel" width="400" height="280"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div id="plotArtist">
+          <div class="panel panel-primary">
+            <div class="panel-body">
+              <h3 class="panel-title">Top 5 Artist by count of Albums using Chart.js</h3>
+            </div>
+            <canvas id="plotArtistPanel" width="400" height="280"></canvas>
+          </div>
+        </div>
+>>>>>>> f8d2552b62ca7a1a106cef13f54a221b9bdacfdd
+      </div>
+    </div>
+      
+    </div>
+  </div>
+  
+  <!-- <script src="https://cdn.plot.ly/plotly-1.31.2.min.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<<<<<<< HEAD
+=======
+  <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+>>>>>>> f8d2552b62ca7a1a106cef13f54a221b9bdacfdd
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+</body>
+
+</html>
